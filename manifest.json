@@ -1,0 +1,25 @@
+{
+  // アプリの正式名称（端末の設定などで表示される）
+  "name": "ポイント実績入力",
+  // ホーム画面でアイコンの下に表示される短い名前
+  "short_name": "ポイント",
+  // アプリ起動時に開くURL（通常は現在のドメインのルート）
+  "start_url": ".",
+  // 表示モード: standalone にするとブラウザのUI（アドレスバーなど）が非表示になる
+  "display": "standalone",
+  // スプラッシュスクリーン（起動中の画面）の背景色
+  "background_color": "#121212",
+  // ステータスバーの色（Android）
+  "theme_color": "#2A2A2A",
+  // ホーム画面に表示するアイコン
+  "icons": [
+    {
+      // 指定されたアイコン画像のURL
+      "src": "https://i-love-music-festivals.github.io/mypointlog/icon.png",
+      // アイコンのサイズ（512x512が推奨）
+      "sizes": "512x512",
+      // 画像形式
+      "type": "image/png"
+    }
+  ]
+}
