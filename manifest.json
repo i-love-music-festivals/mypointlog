@@ -19,7 +19,7 @@
       // アイコンのサイズ（512x512が推奨）
       "sizes": "512x512",
       // 画像形式
-      "type": "image/png"
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
