@@ -1,116 +1,159 @@
 /* --- アプリ全体の基本設定 --- */
-/* 画面全体の背景色や文字の位置などを決めます */
+/* bodyは画面全体の背景や文字の基本ルールを決めます */
 body {
+  /* スマホやPCなど、環境に合わせて見やすいフォントを自動選択させます */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: #121212; /* 黒に近いグレー */
-  color: #F0F0F0; /* 白に近いグレー */
-  display: flex; /* 中身を並べるための便利な機能（フレックスボックス）をオン */
-  justify-content: center; /* 画面の左右中央に寄せる */
-  padding: 40px 20px; /* 上下に40px、左右に20pxの隙間を作る */
+  /* 画面全体の背景色を黒に近いグレーにします */
+  background-color: #121212; 
+  /* 文字の基本色を白に近いグレーにします */
+  color: #F0F0F0; 
+  /* 中身を並べるための便利な機能（フレックスボックス）をオンにします */
+  display: flex; 
+  /* 画面の左右中央にアプリ本体を配置します */
+  justify-content: center; 
+  /* 上下に40px、左右に20pxの隙間を作ります（スマホで端にくっつかないように） */
+  padding: 40px 20px; 
+  /* 外側の余白をゼロにします */
   margin: 0;
 }
 
-/* アプリの本体部分（画面中央に浮かぶカードのような部分） */
+/* アプリの本体部分（画面中央に浮かぶカードのような部分）の見た目です */
 .app-container {
+  /* カードの背景色を少し明るめのグレーにします */
   background-color: #2A2A2A;
-  border-radius: 12px; /* 角を丸くする */
-  padding: 30px; /* 内側の隙間 */
+  /* カードの角を丸くします */
+  border-radius: 12px; 
+  /* カードの内側に30pxの隙間を作ります */
+  padding: 30px; 
+  /* 幅は画面いっぱいに広げます */
   width: 100%;
-  max-width: 800px; /* パソコンで見ても幅が広がりすぎないように制限 */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* フワッと浮いたような影をつける */
+  /* ただし、パソコンなどの大画面で見ても800px以上には広がらないように制限します */
+  max-width: 800px; 
+  /* カードの下にフワッと浮いたような影をつけて立体感を出します */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); 
 }
 
 /* --- ヘッダー部 --- */
+/* タイトルと更新ボタンを並べる箱の設定です */
 .header {
+  /* 横並びにする設定です */
   display: flex;
-  justify-content: space-between; /* タイトルとボタンを左右の両端に離して配置 */
-  align-items: center; /* 上下の高さを中央で揃える */
+  /* タイトルを左、ボタンを右の端と端に離して配置します */
+  justify-content: space-between; 
+  /* 縦方向（上下）の中央で位置を揃えます */
+  align-items: center; 
+  /* 下に20pxの隙間を空けます */
   margin-bottom: 20px;
 }
+/* ヘッダーのメインタイトルの文字サイズなどを設定します */
 .header-title {
   font-size: 24px;
   margin: 0;
-  font-weight: 600;
+  font-weight: 600; /* 文字を少し太くします */
 }
+/* 更新ボタンの見た目です */
 .refresh-btn {
   background-color: #3C3C3C;
-  border: 1px solid #5A5A5A;
+  border: 1px solid #5A5A5A; /* 枠線をつけます */
   color: #F0F0F0;
-  padding: 8px 18px;
-  border-radius: 6px;
-  cursor: pointer; /* マウスを乗せた時に指のマークにする */
+  padding: 8px 18px; /* ボタンの内側の余白（縦 横）です */
+  border-radius: 6px; /* ボタンの角を丸くします */
+  cursor: pointer; /* マウスを乗せた時に指のマーク（クリック可能）にします */
 }
+/* 更新ボタンにマウスが乗った時（hover）の見た目です */
 .refresh-btn:hover {
-  background-color: #4F4F4F; /* マウスを乗せたら少し明るくする */
+  background-color: #4F4F4F; /* 少し明るい色に変化させます */
 }
 
-/* ★追加 --- タブのスタイル --- */
+/* --- タブのスタイル --- */
+/* 「入力」「記録」タブを並べる箱の設定です */
 .tabs {
-  display: flex; /* ボタンを横に並べる */
-  margin-bottom: 24px;
-  border-bottom: 2px solid #4A4A4A; /* タブの下に線を引く */
+  display: flex; /* ボタンを横に並べます */
+  margin-bottom: 24px; /* 下に隙間を作ります */
+  border-bottom: 2px solid #4A4A4A; /* タブ全体の下に区切りの線を引きます */
 }
+/* タブのボタンの共通設定です */
 .tab-btn {
-  flex: 1; /* タブの幅を均等に分ける */
-  background: transparent; /* 背景を透明に */
-  border: none;
-  color: #888; /* 選択されていない時は暗めの文字 */
-  padding: 12px;
+  flex: 1; /* タブの幅を均等に（1:1で）分け合います */
+  background: transparent; /* 背景を透明にします */
+  border: none; /* 枠線を消します */
+  color: #888; /* 選択されていない時は暗めの文字色にします */
+  padding: 12px; /* 内側の余白です */
   font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s; /* 色が変わる時にフワッと変化させる */
+  font-weight: bold; /* 文字を太くします */
+  cursor: pointer; /* クリック可能な指のマークにします */
+  transition: all 0.3s; /* 色が変わる時に0.3秒かけてフワッと変化させます */
 }
-/* タブが「選択されている（アクティブ）」状態の時の見た目 */
+/* タブが「選択されている（active）」状態の時の見た目です */
 .tab-btn.active {
-  color: #3EA8D4; /* 文字を水色に */
-  border-bottom: 3px solid #3EA8D4; /* 下線も水色にして強調 */
+  color: #3EA8D4; /* 文字を強調用の水色にします */
+  border-bottom: 3px solid #3EA8D4; /* 下線も水色にして、選択されていることを明確にします */
 }
 
-/* ★追加 --- 画面表示の切り替え --- */
-/* 基本的にビュー（画面）は非表示にしておく */
+/* --- 画面表示の切り替え --- */
+/* 画面の箱（ビュー）は、基本的にはすべて非表示（見えない状態）にしておきます */
 .view {
   display: none;
 }
-/* アクティブというクラスが付いたビューだけを表示する */
+/* activeというクラスが付いたビューだけを表示させます */
 .view.active {
   display: block;
 }
 
 /* --- 入力フォーム --- */
+/* 1つの入力欄グループ（ラベル＋入力枠）の下に隙間を作ります */
 .form-group { margin-bottom: 20px; }
-.input-label { display: block; font-size: 13px; color: #DDDDDD; margin-bottom: 6px; }
-.total-points { display: block; font-size: 12px; color: #BBBBBB; margin-bottom: 6px; }
-.input-field {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 10px;
-  background-color: #3A3A3A;
-  border: 1px solid #5A5A5A;
-  border-radius: 8px;
-  color: #FFFFFF;
-  font-size: 16px;
+
+/* 入力欄の上のアプリ名の文字設定です */
+.input-label { 
+  display: block; 
+  font-size: 13px; 
+  color: #DDDDDD; 
+  margin-bottom: 6px; 
 }
+/* アプリ名の下に表示される「過去の合計ポイント」の文字設定です */
+.total-points { 
+  display: block; 
+  font-size: 12px; 
+  color: #BBBBBB; 
+  margin-bottom: 6px; 
+}
+/* 数字を入力する枠そのものの設定です */
+.input-field {
+  width: 100%; /* 親の幅いっぱいに広げます */
+  box-sizing: border-box; /* 枠線や余白を幅の計算に含める設定です */
+  padding: 12px 10px; /* 内側の余白です */
+  background-color: #3A3A3A; /* 暗いグレーの背景色です */
+  border: 1px solid #5A5A5A; /* 枠線を引きます */
+  border-radius: 8px; /* 角を丸くします */
+  color: #FFFFFF; /* 入力する文字の色を白にします */
+  font-size: 16px; /* スマホでタップした時にズームされないよう16px以上にします */
+}
+/* 入力枠が選択中（フォーカス中）の見た目です */
 .input-field:focus {
-  outline: none;
-  border-color: #3EA8D4; /* 入力中（フォーカス時）は枠を水色に */
+  outline: none; /* ブラウザ標準の青い枠を消します */
+  border-color: #3EA8D4; /* 枠線を水色に変えて入力中であることを伝えます */
 }
 
-/* JavaScriptで付け外しする色：値が入力済みなら青、未入力なら赤 */
+/* JavaScriptで状態に合わせて付け外しする色です */
+/* 今日のデータがNotionにある場合（青っぽくします） */
 .app-point-input.filled { background-color: #1E6F9F; border-color: #8DC9E8; }
+/* 今日のデータがNotionにない場合（赤っぽくします） */
 .app-point-input.unfilled { background-color: #9F3A3A; border-color: #E08A8A; }
 
+/* 複数あるアプリの入力欄を並べる箱の設定です */
 .apps-list {
-  display: grid; /* 格子状（グリッド）に並べる */
-  grid-template-columns: repeat(3, 1fr); /* 3列で均等の幅にする */
-  gap: 20px; /* 列同士の隙間 */
-  margin: 20px 0;
+  display: grid; /* 格子状（グリッド）に並べる機能を使います */
+  grid-template-columns: repeat(3, 1fr); /* 均等な幅で3列に並べます */
+  gap: 20px; /* 列や行の間の隙間を20pxにします */
+  margin: 20px 0; /* 上下に隙間を作ります */
 }
 
+/* 送信ボタンの見た目です */
 .submit-btn {
-  width: 100%;
+  width: 100%; /* 幅いっぱいに広げます */
   padding: 14px;
-  background-color: #2EAADC;
+  background-color: #2EAADC; /* 目立つ青色にします */
   color: white;
   border: none;
   border-radius: 8px;
@@ -118,67 +161,73 @@ body {
   font-weight: bold;
   cursor: pointer;
 }
-.submit-btn:disabled { background-color: #555; cursor: not-allowed; }
+/* 送信ボタンが無効（送信中など）になっている時の見た目です */
+.submit-btn:disabled { 
+  background-color: #555; /* 暗い色にします */
+  cursor: not-allowed; /* マウスを乗せたら禁止マークにします */
+}
 
-/* ★追加 --- グラフのスタイル --- */
-/* 本日の合計金額を大きく表示する部分 */
+/* --- グラフのスタイル（記録タブ） --- */
+/* 本日の合計金額を大きく表示するエリアです */
 .total-yen-display {
-  text-align: center;
+  text-align: center; /* 文字を中央揃えにします */
   font-size: 18px;
   margin-bottom: 30px;
   color: #DDD;
 }
+/* 合計金額の数字部分だけ目立たせます */
 .total-yen-value {
-  font-size: 40px; /* 金額の数字だけ特に大きく */
+  font-size: 40px; /* 数字だけ大きくします */
   font-weight: bold;
-  color: #FFD700; /* ゴールドっぽい色で目立たせる */
+  color: #FFD700; /* ゴールドっぽい色で達成感を出します */
   margin: 0 8px;
 }
+/* 「円」の単位部分です */
 .total-yen-unit {
   font-size: 20px;
 }
 
-/* グラフ全体を囲む箱 */
+/* グラフ全体を囲む箱です */
 .chart-container {
   display: flex;
-  flex-direction: column; /* グラフの行を縦に並べる */
-  gap: 12px; /* 行ごとの隙間 */
+  flex-direction: column; /* グラフの行を上から下へ縦に並べます */
+  gap: 12px; /* 行ごとの隙間を作ります */
 }
-/* グラフ1行分（名前 + 棒 + 金額）を横並びにする */
+/* グラフ1行分（アプリ名 + 棒グラフ + 金額）の箱です */
 .chart-row {
-  display: flex;
-  align-items: center; /* 縦方向の中央で揃える */
+  display: flex; /* 中身を横並びにします */
+  align-items: center; /* 縦方向の中央で揃えます */
 }
-/* 左側のアプリ名 */
+/* 左側に表示するアプリ名の部分です */
 .chart-label {
-  width: 100px; /* 名前部分の幅を固定 */
+  width: 100px; /* 名前部分の幅を固定します */
   font-size: 13px;
-  text-align: right; /* 右寄せにして棒グラフとくっつける */
+  text-align: right; /* 右寄せにして、棒グラフにピタッとくっつけます */
   margin-right: 12px;
   color: #CCC;
-  white-space: nowrap; /* 文字が長くても折り返さない */
-  overflow: hidden; /* はみ出した部分は隠す */
-  text-overflow: ellipsis; /* 隠れた部分を「...」にする */
+  white-space: nowrap; /* 文字が長くても途中で改行させません */
+  overflow: hidden; /* 幅からはみ出した部分は隠します */
+  text-overflow: ellipsis; /* 隠れた部分を「...」で省略表示します */
 }
-/* 棒グラフの背景（バーが伸びるレールのような部分） */
+/* 棒グラフの背景（バーが伸びるレールのような部分）です */
 .chart-bar-area {
-  flex: 1; /* 残りの幅を全部使う */
-  background-color: #3A3A3A;
+  flex: 1; /* 名前と金額以外の残りの幅をすべて使います */
+  background-color: #3A3A3A; /* 暗めの背景色にします */
   border-radius: 4px;
-  height: 24px;
+  height: 24px; /* 棒の太さ（高さ）です */
   position: relative;
 }
-/* 伸びる棒そのもの */
+/* 実際に長さが変わる棒グラフの部分です */
 .chart-bar {
-  background-color: #3EA8D4; /* バーの色 */
-  height: 100%; /* レールの高さに合わせる */
+  background-color: #3EA8D4; /* 棒の色を水色にします */
+  height: 100%; /* 親（レール）の高さに合わせます */
   border-radius: 4px;
-  transition: width 0.5s ease-out; /* 幅が変わる時に0.5秒かけて滑らかに動かす */
+  transition: width 0.5s ease-out; /* JavaScriptで幅が変わった時、0.5秒かけて滑らかに動かします */
 }
-/* 右側の金額表示 */
+/* 右側に表示する金額部分です */
 .chart-value {
-  width: 50px;
-  text-align: right;
+  width: 50px; /* 幅を固定します */
+  text-align: right; /* 右寄せにします */
   margin-left: 12px;
   font-size: 13px;
   color: #FFF;
@@ -186,15 +235,22 @@ body {
 }
 
 /* --- ステータスメッセージ --- */
+/* メッセージボックスの共通設定です */
 .status-msg { margin-top: 24px; padding: 14px; border-radius: 8px; text-align: center; }
+/* hiddenクラスがついている時は非表示にします */
 .status-msg.hidden { display: none; }
+/* お知らせ（青） */
 .status-msg.info { background-color: #2C3E50; color: #D6EAF8; border-left: 5px solid #3498DB; }
+/* 成功（緑） */
 .status-msg.success { background-color: #1E3A2F; color: #C8E6D9; border-left: 5px solid #2ECC71; }
+/* エラー（赤） */
 .status-msg.error { background-color: #4A1E1E; color: #FAC8CD; border-left: 5px solid #E74C3C; }
 
 /* --- スマホなどの小さい画面向けのルール --- */
+/* 画面幅が600px以下の端末（スマホなど）で見た時だけ適用される設定です */
 @media (max-width: 600px) {
   .apps-list {
-    grid-template-columns: repeat(2, 1fr); /* 2列に変更 */
+    /* 3列だと狭すぎるので、2列に変更して見やすくします */
+    grid-template-columns: repeat(2, 1fr); 
   }
 }

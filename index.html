@@ -32,6 +32,7 @@
     
     <div id="view-input" class="view active">
       <form id="data-form" class="input-form">
+        
         <div class="form-group">
           <label for="date-input" class="input-label">日付</label>
           <input type="date" id="date-input" class="input-field" required>
@@ -45,7 +46,9 @@
 
     <div id="view-record" class="view">
       <div class="total-yen-display">
-        本日の合計: <span id="total-yen" class="total-yen-value">0</span><span class="total-yen-unit">円</span>
+        本日の合計: 
+        <span id="total-yen" class="total-yen-value">0</span>
+        <span class="total-yen-unit">円</span>
       </div>
       <div id="chart-container" class="chart-container"></div>
     </div>
@@ -56,8 +59,11 @@
   <script src="app.js"></script>
   
   <script>
+    // ブラウザがサービスワーカーに対応しているか確認します
     if ('serviceWorker' in navigator) {
+      // ページの読み込みが完了したら実行します
       window.addEventListener('load', () => {
+        // service-worker.js を登録して、オフライン表示などの機能を有効にします
         navigator.serviceWorker.register('service-worker.js');
       });
     }
