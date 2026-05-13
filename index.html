@@ -3,70 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  
   <meta name="theme-color" content="#2A2A2A">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ポイント">
-  <link rel="apple-touch-icon" href="https://i-love-music-festivals.github.io/mypointlog/icon.png">
-  
   <link rel="manifest" href="manifest.json">
-  
   <title>ポイ活実績入力</title>
-  
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <div class="app-container">
-    
     <div class="header">
       <h1 class="header-title">ポイ活実績入力</h1>
-      <button id="refresh-button" class="refresh-btn" title="Notionの最新値を取得">更新</button>
+      <button id="refresh-button" class="refresh-btn">更新</button>
     </div>
     
     <div class="tabs">
-      <button id="tab-input" class="tab-btn active">入力</button>
+      <button id="tab-input" class="tab-btn">入力</button>
       <button id="tab-record" class="tab-btn">記録</button>
     </div>
     
-    <div id="view-input" class="view active">
-      <form id="data-form" class="input-form">
-        
+    <div id="view-input" class="view">
+      <form id="data-form">
         <div class="form-group">
-          <label for="date-input" class="input-label">日付</label>
+          <label class="input-label">日付</label>
           <input type="date" id="date-input" class="input-field" required>
         </div>
-
         <div id="apps-container" class="apps-list"></div>
-        
         <button type="submit" id="submit-button" class="submit-btn">Notionへ送信</button>
       </form>
     </div>
 
     <div id="view-record" class="view">
-      <div class="total-yen-display">
-        本日の合計: 
-        <span id="total-yen" class="total-yen-value">0</span>
-        <span class="total-yen-unit">円</span>
-      </div>
+      <div class="total-yen-display">本日の合計: <span id="total-yen" class="total-yen-value">0</span><span style="font-size:18px"> 円</span></div>
       <div id="chart-container" class="chart-container"></div>
+      
+      <div class="weekly-chart-section">
+        <h2 class="weekly-chart-title">1日の獲得金額推移</h2>
+        <div id="weekly-chart-container" class="weekly-chart-area"></div>
+      </div>
     </div>
     
     <div id="status-message" class="status-msg hidden"></div>
   </div>
-
   <script src="app.js"></script>
-  
-  <script>
-    // ブラウザがサービスワーカーに対応しているか確認します
-    if ('serviceWorker' in navigator) {
-      // ページの読み込みが完了したら実行します
-      window.addEventListener('load', () => {
-        // service-worker.js を登録して、オフライン表示などの機能を有効にします
-        navigator.serviceWorker.register('service-worker.js');
-      });
-    }
-  </script>
 </body>
 </html>
