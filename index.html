@@ -1,80 +1,64 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <!-- 文字コードの指定 -->
   <meta charset="UTF-8">
-  <!-- スマホの画面幅に合わせて拡大縮小し、PWA表示を可能にする -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
-  <!-- ★ PWA対応：テーマカラーの指定（Androidのステータスバー色） -->
   <meta name="theme-color" content="#2A2A2A">
-  
-  <!-- ★ PWA対応：Apple用の設定（iOSで全画面表示させたい場合） -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ポイント">
-  <!-- iOS用のアイコン（指定がなければ使わなくてもOKだが、推奨） -->
   <link rel="apple-touch-icon" href="https://i-love-music-festivals.github.io/mypointlog/icon.png">
   
-  <!-- ★ PWA対応：マニフェストファイルの読み込み（これがないとホーム画面に追加できない） -->
   <link rel="manifest" href="manifest.json">
   
-  <!-- この画面のタイトル -->
   <title>ポイ活実績入力</title>
   
-  <!-- ★ CSSファイルの読み込み：見た目の装飾は全てこのファイルに任せる -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- アプリ全体を包むコンテナ：スタイルの適用範囲を限定するための枠 -->
   <div class="app-container">
     
-    <!-- ヘッダー部分：タイトルと更新ボタンを横に並べるためのブロック -->
     <div class="header">
-      <!-- 画面の大見出し -->
       <h1 class="header-title">ポイ活実績入力</h1>
-      <!-- 手動更新ボタン：押すとNotionから最新のデータを再取得する -->
       <button id="refresh-button" class="refresh-btn" title="Notionの最新値を取得">更新</button>
     </div>
     
-    <!-- 入力フォーム全体：送信ボタンが押された時の行き先（action）はJSで制御するので空 -->
-    <form id="data-form" class="input-form">
-      <!-- 日付入力欄をまとめるグループ -->
-      <div class="form-group">
-        <!-- 日付入力欄のラベル -->
-        <label for="date-input" class="input-label">日付</label>
-        <!-- 日付入力欄本体 -->
-        <input type="date" id="date-input" class="input-field" required>
-      </div>
-
-      <!-- 各アプリの入力欄を動的に挿入するための空のコンテナ -->
-      <div id="apps-container" class="apps-list"></div>
-      
-      <!-- 送信ボタン -->
-      <button type="submit" id="submit-button" class="submit-btn">Notionへ送信</button>
-    </form>
+    <div class="tabs">
+      <button id="tab-input" class="tab-btn active">入力</button>
+      <button id="tab-record" class="tab-btn">記録</button>
+    </div>
     
-    <!-- 成功/失敗メッセージなどを表示するエリア -->
+    <div id="view-input" class="view active">
+      <form id="data-form" class="input-form">
+        <div class="form-group">
+          <label for="date-input" class="input-label">日付</label>
+          <input type="date" id="date-input" class="input-field" required>
+        </div>
+
+        <div id="apps-container" class="apps-list"></div>
+        
+        <button type="submit" id="submit-button" class="submit-btn">Notionへ送信</button>
+      </form>
+    </div>
+
+    <div id="view-record" class="view">
+      <div class="total-yen-display">
+        本日の合計: <span id="total-yen" class="total-yen-value">0</span><span class="total-yen-unit">円</span>
+      </div>
+      <div id="chart-container" class="chart-container"></div>
+    </div>
+    
     <div id="status-message" class="status-msg hidden"></div>
   </div>
 
-  <!-- ★ JavaScriptファイルの読み込み：画面の動きやデータ処理を担当 -->
   <script src="app.js"></script>
   
-  <!-- ★ PWA対応：サービスワーカーの登録（オフライン対応の要） -->
   <script>
-    // ブラウザがサービスワーカー機能を持っているか確認
     if ('serviceWorker' in navigator) {
-      // ページ読み込み完了後にサービスワーカーを登録する
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-          .then((registration) => {
-            console.log('Service Worker 登録成功:', registration.scope);
-          })
-          .catch((error) => {
-            console.log('Service Worker 登録失敗:', error);
-          });
+        navigator.serviceWorker.register('service-worker.js');
       });
     }
   </script>

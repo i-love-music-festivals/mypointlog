@@ -1,129 +1,115 @@
-/* style.css - 視認性向上版 */
-/* body全体の基本スタイル：背景色、文字色、フォント、中央寄せ */
+/* --- アプリ全体の基本設定 --- */
+/* 画面全体の背景色や文字の位置などを決めます */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: #121212; /* 深いダークグレー：高コントラストで視認性確保 */
-  color: #F0F0F0;
-  display: flex;
-  justify-content: center; /* 左右中央寄せ */
-  padding: 40px 20px; /* 上下 左右の余白 */
+  background-color: #121212; /* 黒に近いグレー */
+  color: #F0F0F0; /* 白に近いグレー */
+  display: flex; /* 中身を並べるための便利な機能（フレックスボックス）をオン */
+  justify-content: center; /* 画面の左右中央に寄せる */
+  padding: 40px 20px; /* 上下に40px、左右に20pxの隙間を作る */
   margin: 0;
 }
 
-/* アプリの本体部分（白いカードのようなイメージ） */
+/* アプリの本体部分（画面中央に浮かぶカードのような部分） */
 .app-container {
-  background-color: #2A2A2A; /* やや明るいダークグレー */
-  border-radius: 12px;       /* 角を少し丸く */
-  padding: 30px;             /* 内側の余白 */
+  background-color: #2A2A2A;
+  border-radius: 12px; /* 角を丸くする */
+  padding: 30px; /* 内側の隙間 */
   width: 100%;
-  max-width: 800px;          /* 最大幅（広すぎないようにする） */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* 立体感を出す影 */
+  max-width: 800px; /* パソコンで見ても幅が広がりすぎないように制限 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* フワッと浮いたような影をつける */
 }
 
 /* --- ヘッダー部 --- */
 .header {
   display: flex;
-  justify-content: space-between; /* タイトルとボタンを両端に */
-  align-items: center;           /* 上下中央揃え */
-  margin-bottom: 28px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #4A4A4A; /* 下線で区切りを明確に */
+  justify-content: space-between; /* タイトルとボタンを左右の両端に離して配置 */
+  align-items: center; /* 上下の高さを中央で揃える */
+  margin-bottom: 20px;
 }
-
-/* タイトル文字 */
 .header-title {
   font-size: 24px;
   margin: 0;
   font-weight: 600;
-  letter-spacing: 0.5px;
 }
-
-/* 更新ボタン */
 .refresh-btn {
   background-color: #3C3C3C;
   border: 1px solid #5A5A5A;
   color: #F0F0F0;
   padding: 8px 18px;
   border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer; /* マウスが乗ると指マークに */
-  transition: all 0.2s; /* 色が変わる時のアニメーション */
+  cursor: pointer; /* マウスを乗せた時に指のマークにする */
 }
-/* マウスが乗った時の見た目 */
 .refresh-btn:hover {
-  background-color: #4F4F4F;
-  border-color: #7A7A7A;
-  transform: scale(1.02); /* 少し大きく */
+  background-color: #4F4F4F; /* マウスを乗せたら少し明るくする */
 }
 
-/* --- フォーム要素 --- */
-/* 各入力欄をまとめるグループ */
-.form-group {
-  margin-bottom: 20px;
+/* ★追加 --- タブのスタイル --- */
+.tabs {
+  display: flex; /* ボタンを横に並べる */
+  margin-bottom: 24px;
+  border-bottom: 2px solid #4A4A4A; /* タブの下に線を引く */
+}
+.tab-btn {
+  flex: 1; /* タブの幅を均等に分ける */
+  background: transparent; /* 背景を透明に */
+  border: none;
+  color: #888; /* 選択されていない時は暗めの文字 */
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s; /* 色が変わる時にフワッと変化させる */
+}
+/* タブが「選択されている（アクティブ）」状態の時の見た目 */
+.tab-btn.active {
+  color: #3EA8D4; /* 文字を水色に */
+  border-bottom: 3px solid #3EA8D4; /* 下線も水色にして強調 */
 }
 
-/* ラベル（アプリ名） */
-.input-label {
+/* ★追加 --- 画面表示の切り替え --- */
+/* 基本的にビュー（画面）は非表示にしておく */
+.view {
+  display: none;
+}
+/* アクティブというクラスが付いたビューだけを表示する */
+.view.active {
   display: block;
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #DDDDDD;
 }
 
-/* 合計ポイント表示用のテキスト */
-.total-points {
-  display: block;
-  font-size: 12px;
-  color: #BBBBBB;
-  margin-bottom: 6px;
-}
-
-/* 数字入力欄の基本設定 */
+/* --- 入力フォーム --- */
+.form-group { margin-bottom: 20px; }
+.input-label { display: block; font-size: 13px; color: #DDDDDD; margin-bottom: 6px; }
+.total-points { display: block; font-size: 12px; color: #BBBBBB; margin-bottom: 6px; }
 .input-field {
   width: 100%;
-  box-sizing: border-box; /* パディングを含めて幅100% */
+  box-sizing: border-box;
   padding: 12px 10px;
   background-color: #3A3A3A;
   border: 1px solid #5A5A5A;
   border-radius: 8px;
   color: #FFFFFF;
   font-size: 16px;
-  transition: border 0.2s, box-shadow 0.2s;
 }
-/* 入力欄が選択された時の見た目 */
 .input-field:focus {
   outline: none;
-  border-color: #3EA8D4;
-  box-shadow: 0 0 0 3px rgba(62, 168, 212, 0.3); /* 青い発光 */
+  border-color: #3EA8D4; /* 入力中（フォーカス時）は枠を水色に */
 }
 
-/* ★ 以下はJSで切り替わる「入力状態に応じた色」 ★ */
-/* 値が入力済み（青背景） */
-.app-point-input.filled {
-  background-color: #1E6F9F;
-  border-color: #8DC9E8;
-}
-/* 値が未入力（赤背景） */
-.app-point-input.unfilled {
-  background-color: #9F3A3A;
-  border-color: #E08A8A;
-}
+/* JavaScriptで付け外しする色：値が入力済みなら青、未入力なら赤 */
+.app-point-input.filled { background-color: #1E6F9F; border-color: #8DC9E8; }
+.app-point-input.unfilled { background-color: #9F3A3A; border-color: #E08A8A; }
 
-/* アプリ一覧のグリッドレイアウト */
 .apps-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3列均等割り */
-  gap: 20px;
+  display: grid; /* 格子状（グリッド）に並べる */
+  grid-template-columns: repeat(3, 1fr); /* 3列で均等の幅にする */
+  gap: 20px; /* 列同士の隙間 */
   margin: 20px 0;
 }
 
-/* --- 送信ボタン --- */
 .submit-btn {
   width: 100%;
   padding: 14px;
-  margin-top: 12px;
   background-color: #2EAADC;
   color: white;
   border: none;
@@ -131,63 +117,84 @@ body {
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.05s;
 }
-.submit-btn:hover {
-  background-color: #2488B2;
-  transform: scale(1.01);
+.submit-btn:disabled { background-color: #555; cursor: not-allowed; }
+
+/* ★追加 --- グラフのスタイル --- */
+/* 本日の合計金額を大きく表示する部分 */
+.total-yen-display {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 30px;
+  color: #DDD;
 }
-/* 送信中などで無効になっている時 */
-.submit-btn:disabled {
-  background-color: #555;
-  cursor: not-allowed;
-  transform: none;
-  opacity: 0.7;
+.total-yen-value {
+  font-size: 40px; /* 金額の数字だけ特に大きく */
+  font-weight: bold;
+  color: #FFD700; /* ゴールドっぽい色で目立たせる */
+  margin: 0 8px;
+}
+.total-yen-unit {
+  font-size: 20px;
+}
+
+/* グラフ全体を囲む箱 */
+.chart-container {
+  display: flex;
+  flex-direction: column; /* グラフの行を縦に並べる */
+  gap: 12px; /* 行ごとの隙間 */
+}
+/* グラフ1行分（名前 + 棒 + 金額）を横並びにする */
+.chart-row {
+  display: flex;
+  align-items: center; /* 縦方向の中央で揃える */
+}
+/* 左側のアプリ名 */
+.chart-label {
+  width: 100px; /* 名前部分の幅を固定 */
+  font-size: 13px;
+  text-align: right; /* 右寄せにして棒グラフとくっつける */
+  margin-right: 12px;
+  color: #CCC;
+  white-space: nowrap; /* 文字が長くても折り返さない */
+  overflow: hidden; /* はみ出した部分は隠す */
+  text-overflow: ellipsis; /* 隠れた部分を「...」にする */
+}
+/* 棒グラフの背景（バーが伸びるレールのような部分） */
+.chart-bar-area {
+  flex: 1; /* 残りの幅を全部使う */
+  background-color: #3A3A3A;
+  border-radius: 4px;
+  height: 24px;
+  position: relative;
+}
+/* 伸びる棒そのもの */
+.chart-bar {
+  background-color: #3EA8D4; /* バーの色 */
+  height: 100%; /* レールの高さに合わせる */
+  border-radius: 4px;
+  transition: width 0.5s ease-out; /* 幅が変わる時に0.5秒かけて滑らかに動かす */
+}
+/* 右側の金額表示 */
+.chart-value {
+  width: 50px;
+  text-align: right;
+  margin-left: 12px;
+  font-size: 13px;
+  color: #FFF;
+  font-weight: bold;
 }
 
 /* --- ステータスメッセージ --- */
-.status-msg {
-  margin-top: 24px;
-  padding: 14px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-/* 非表示状態 */
-.status-msg.hidden {
-  display: none;
-}
-/* 情報メッセージ（読み込み中など） */
-.status-msg.info {
-  background-color: #2C3E50;
-  color: #D6EAF8;
-  border-left: 5px solid #3498DB;
-}
-/* 成功メッセージ */
-.status-msg.success {
-  background-color: #1E3A2F;
-  color: #C8E6D9;
-  border-left: 5px solid #2ECC71;
-}
-/* エラーメッセージ */
-.status-msg.error {
-  background-color: #4A1E1E;
-  color: #FAC8CD;
-  border-left: 5px solid #E74C3C;
-}
+.status-msg { margin-top: 24px; padding: 14px; border-radius: 8px; text-align: center; }
+.status-msg.hidden { display: none; }
+.status-msg.info { background-color: #2C3E50; color: #D6EAF8; border-left: 5px solid #3498DB; }
+.status-msg.success { background-color: #1E3A2F; color: #C8E6D9; border-left: 5px solid #2ECC71; }
+.status-msg.error { background-color: #4A1E1E; color: #FAC8CD; border-left: 5px solid #E74C3C; }
 
-/* スマホ対応：画面幅600px以下の時は2列表示に */
+/* --- スマホなどの小さい画面向けのルール --- */
 @media (max-width: 600px) {
   .apps-list {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-  .app-container {
-    padding: 20px;
-  }
-  .header-title {
-    font-size: 20px;
+    grid-template-columns: repeat(2, 1fr); /* 2列に変更 */
   }
 }

@@ -1,85 +1,72 @@
 // ===============================================
 // 1. データ層 (Data Layer)
-// 「この人は時間を隠す」「タイトルはこれ」といった
-// アプリの状態や設定を「意味」としてまとめた場所です。
+// アプリ全体で使うルールや「設定値」をまとめておきます。
+// ロジック（計算や画面作り）とは切り離すことで管理しやすくします。
 // ===============================================
 
-// --- 設定データ (CONFIG) ---
-// 変更されることがほとんどない、アプリの根本的な設定値
 const CONFIG = {
-  // Google Apps Script (gas.js) の公開URL
-  gasUrl: "https://script.google.com/macros/s/AKfycbw8HL6k0m3i4UilxMiSLTzW_Oec55oOq017RHBOF0TuNfiajoo3XIIQmiETgnT1Kfrz_A/exec",
-  // アプリ一覧（表示名とNotionで使うプロパティ名を兼ねる）
-  // 「（入力用）」は表示時に取り除かれる
+  // GAS（Google Apps Script）の連携URLを設定します
+  gasUrl: "https://script.google.com/macros/s/AKfycbyXX9fetYv5GYnUQc39hxWfnQ6_xwEJru-GG0FYoHghjebLH5lbWlkHmfihrSCf_Kni1g/exec",
+  
+  // ポイ活アプリの一覧。名前と（入力用）という文字列がセットになっています
   apps: [
-    "1.トリマ（入力用）",
-    "2.アルコイン（入力用）",
-    "3.レシチャレ（入力用）",
-    "4.powl（入力用）",
-    "5.プラリー（入力用）",
-    "6.もふポ（入力用）",
-    "7.ビーンズ（入力用）",
-    "8.ポイントインカム（入力用）",
-    "9.ポイントタウン（入力用）",
-    "10.シェアフル（入力用）",
-    "11.Pint（入力用）",
-    "12.PUI（入力用）",
-    "13.おぢポ（入力用）",
-    "14.ぽいころ（入力用）",
-    "15.ロコネ（入力用）",
-    "16.YONQ（入力用）",
-    "17.Moneywalk（入力用）",
-    "18.Cashwalk（入力用）",
-    "19.エブリポイント（入力用）",
-    "20.tokuria walk（入力用）",
-    "21.毎日運動（入力用）",
-    "22.noma（入力用）",
-    "23.TikTok Lite（入力用）",
-    "24.トクエル（入力用）",
-    "25.オモポ（入力用）",
-    "26.ポイにゃん（入力用）"
-  ]
+    "1.トリマ（入力用）", "2.アルコイン（入力用）", "3.レシチャレ（入力用）",
+    "4.powl（入力用）", "5.プラリー（入力用）", "6.もふポ（入力用）",
+    "7.ビーンズ（入力用）", "8.ポイントインカム（入力用）", "9.ポイントタウン（入力用）",
+    "10.シェアフル（入力用）", "11.Pint（入力用）", "12.PUI（入力用）",
+    "13.おぢポ（入力用）", "14.ぽいころ（入力用）", "15.ロコネ（入力用）",
+    "16.YONQ（入力用）", "17.Moneywalk（入力用）", "18.Cashwalk（入力用）",
+    "19.エブリポイント（入力用）", "20.tokuria walk（入力用）", "21.毎日運動（入力用）",
+    "22.noma（入力用）", "23.TikTok Lite（入力用）", "24.トクエル（入力用）",
+    "25.オモポ（入力用）", "26.ポイにゃん（入力用）"
+  ],
+  
+  // 各アプリのポイントを日本円に換算するための「割る数（レート）」
+  // 例: トリマの115ポイント = 1円
+  rates: {
+    "1.トリマ（入力用）": 115, "2.アルコイン（入力用）": 10, "3.レシチャレ（入力用）": 110,
+    "4.powl（入力用）": 11, "5.プラリー（入力用）": 150, "6.もふポ（入力用）": 90,
+    "7.ビーンズ（入力用）": 110, "8.ポイントインカム（入力用）": 10, "9.ポイントタウン（入力用）": 1,
+    "10.シェアフル（入力用）": 100, "11.Pint（入力用）": 100, "12.PUI（入力用）": 11,
+    "13.おぢポ（入力用）": 9, "14.ぽいころ（入力用）": 15, "15.ロコネ（入力用）": 110,
+    "16.YONQ（入力用）": 110, "17.Moneywalk（入力用）": 20, "18.Cashwalk（入力用）": 6,
+    "19.エブリポイント（入力用）": 110, "20.tokuria walk（入力用）": 110, "21.毎日運動（入力用）": 275,
+    "22.noma（入力用）": 120, "23.TikTok Lite（入力用）": 100, "24.トクエル（入力用）": 110,
+    "25.オモポ（入力用）": 110, "26.ポイにゃん（入力用）": 120
+  }
 };
 
-// --- 状態データ (STATE) ---
-// アプリの「今」の状態を表す変数。時間の経過や操作で変化する。
+// アプリの「今の状態」を記憶しておく場所
 const state = {
-  // フォームを送信中かどうか（二重送信防止）
-  isSubmitting: false,
-  // 画面下のステータスメッセージ
-  message: { text: "", type: "hidden" },
-  // Notionから取得した最新の状態（差分計算前のデータ）
-  notionStatus: null,
-  // 日付が変わったことを検知するための最後にリセットした日付
-  lastResetDate: null
+  isSubmitting: false, // データ送信中かどうか
+  message: { text: "", type: "hidden" }, // 画面に出すメッセージ
+  notionStatus: null, // Notionから持ってきたデータを入れておく
+  lastResetDate: null, // 最後に夜間リセットをした日付
+  activeTab: 'input' // 現在開いているタブ（初期値は 'input' ＝入力画面）
 };
 
 // ===============================================
 // 2. ユーティリティ関数 (Utilities)
-// 画面を作る際に何度も使う小さな道具箱です。
+// 何度も使う便利な小さな道具（関数）です。
 // ===============================================
 
-// 指定された要素を空にする関数
-function clearElement(element) {
-  element.innerHTML = '';
-}
+// 指定したHTML要素の中身を空っぽにする道具
+function clearElement(element) { element.innerHTML = ''; }
 
-// 日付を YYYY-MM-DD 形式で返す関数
+// 日付データを「YYYY-MM-DD」という綺麗な文字の形にする道具
 function formatDate(date) {
   const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, '0'); // 月を2桁にする（3月→03）
+  const d = String(date.getDate()).padStart(2, '0'); // 日を2桁にする
   return `${y}-${m}-${d}`;
 }
 
 // ===============================================
-// 3. ロジック層 (Logic Layer) - 画面構築
-// データの「意味」に従って、画面（DOM）を作り変えます。
-// HTMLは触らず、ここで全ての要素生成と更新を行います。
+// 3. ロジック層 (Logic Layer)
+// データ(CONFIGやstate)を見て、HTMLの見た目を作る処理です。
 // ===============================================
 
-// --- DOM要素の取得 ---
-// 画面に表示するための部品をJSで操作できるように取得する
+// --- HTMLから操作したい部品を見つけて、変数（あだ名）をつけておく ---
 const formEl = document.getElementById("data-form");
 const dateInputEl = document.getElementById("date-input");
 const appsContainerEl = document.getElementById("apps-container");
@@ -87,20 +74,29 @@ const submitBtnEl = document.getElementById("submit-button");
 const messageEl = document.getElementById("status-message");
 const refreshBtnEl = document.getElementById("refresh-button");
 
+const tabInputBtn = document.getElementById("tab-input");
+const tabRecordBtn = document.getElementById("tab-record");
+const viewInput = document.getElementById("view-input");
+const viewRecord = document.getElementById("view-record");
+const chartContainer = document.getElementById("chart-container");
+const totalYenEl = document.getElementById("total-yen");
+
 // --- 画面の初期化 (Init) ---
-// アプリ起動時に一度だけ実行される
+// アプリを開いた時に一番最初に実行される処理です。
 function init() {
-  // 1. 日付を今日に設定
+  // 日付入力欄に「今日の日付」をセットする
   const today = new Date();
   dateInputEl.value = formatDate(today);
 
-  // 2. アプリ一覧の入力欄を動的に生成
-  clearElement(appsContainerEl); // 既にあれば一度きれいにする
+  // 入力欄のエリアを一旦空っぽにする
+  clearElement(appsContainerEl);
+  
+  // CONFIG.apps のリストを見ながら、アプリの数だけ入力欄を自動で作る
   CONFIG.apps.forEach(appName => {
-    // 表示名から「（入力用）」を消す
+    // 画面のラベル用には「（入力用）」という文字だけ削って綺麗にする
     const displayName = appName.replace(/（入力用）$/, '').trim();
     
-    // 各アプリの入力欄を包むブロックを作成
+    // 入力欄1つ分のHTMLのかたまりを作る
     const groupDiv = document.createElement("div");
     groupDiv.className = "form-group";
     groupDiv.innerHTML = `
@@ -108,159 +104,160 @@ function init() {
       <span class="total-points" data-app-name="${appName}">合計: ...</span>
       <input type="number" class="input-field app-point-input" data-app-name="${appName}">
     `;
-    // 作ったブロックを画面のapps-containerに追加
+    // 作ったかたまりを画面に追加する
     appsContainerEl.appendChild(groupDiv);
   });
 
-  // 3. イベントリスナーの設定
-  // 日付が変わった時の処理
+  // カレンダーで日付を変えたら、その日のデータをNotionから取ってくるようにする
   dateInputEl.addEventListener("change", () => {
-    const newDate = dateInputEl.value;
-    if (newDate) {
-      fetchNotionStatus(newDate); // Notionからデータ取得
-    }
+    if (dateInputEl.value) fetchNotionStatus(dateInputEl.value);
   });
 
-  // 更新ボタンが押された時の処理
+  // 更新ボタンを押した時の処理
   refreshBtnEl.addEventListener("click", () => {
-    const currentDate = dateInputEl.value;
-    if (currentDate) {
-      fetchNotionStatus(currentDate);
+    if (dateInputEl.value) {
+      fetchNotionStatus(dateInputEl.value);
     } else {
-      // 日付が空ならエラーメッセージを表示（renderがSTATEを見て画面を変える）
       state.message = { text: "日付を選択してください", type: "error" };
       render();
     }
   });
 
-  // フォーム送信時の処理
+  // 送信ボタンを押した時の処理
   formEl.addEventListener("submit", handleFormSubmit);
 
-  // 4. 初回データ取得と時刻リセットの監視を開始
+  // 「入力」タブボタンを押した時の処理
+  tabInputBtn.addEventListener("click", () => {
+    state.activeTab = 'input'; // 状態を「入力」に変更して
+    render(); // 画面を更新する
+  });
+  
+  // 「記録」タブボタンを押した時の処理
+  tabRecordBtn.addEventListener("click", () => {
+    state.activeTab = 'record'; // 状態を「記録」に変更して
+    render(); // 画面を更新する
+  });
+
+  // 初回起動時、今日の日付のデータをNotionから取ってくる
   fetchNotionStatus(dateInputEl.value);
+  
+  // 午前3時のリセット機能を開始する（1分間に1回チェックする）
   checkTimeReset();
-  setInterval(checkTimeReset, 60000); // 1分ごとにリセットチェック
+  setInterval(checkTimeReset, 60000);
+  
+  // 今の状態に合わせて画面を描く
   render();
 }
 
-// --- 時刻リセットチェック (Time Reset) ---
-// 午前3時を過ぎたら、入力欄の色や値をリセットする
+// --- 午前3時のリセット機能 ---
+// 毎日午前3時になったら、画面の入力欄を空っぽにします。
 function checkTimeReset() {
   const now = new Date();
   const todayStr = formatDate(now);
   const hour = now.getHours();
 
-  // 午前3時以降 かつ まだ今日のリセットを実行していない場合
+  // 3時以降 ＆ 今日まだリセットしていなければ実行
   if (hour >= 3 && state.lastResetDate !== todayStr) {
+    // すべての入力欄を空っぽにして、色も消す
     document.querySelectorAll(".app-point-input").forEach(input => {
-      input.value = ""; // 値をクリア
-      input.classList.remove("filled", "unfilled"); // 色をリセット
+      input.value = "";
+      input.classList.remove("filled", "unfilled");
     });
-    state.lastResetDate = todayStr; // 今日はリセット済みの印
+    state.lastResetDate = todayStr; // リセットしたことを記憶
+    render(); // 画面を更新
   }
   
-  // 午前3時前に日付が変わった場合、リセットフラグを戻す
+  // 3時より前（0時〜2時）の場合は、翌日のリセットに備えて記憶を消す
   if (state.lastResetDate && state.lastResetDate !== todayStr && hour < 3) {
     state.lastResetDate = null;
   }
 }
 
-// --- Notion API 通信 ---
-// Notionからデータを取得し、状態(state)を更新する
+// --- Notionからデータを取得する処理 ---
 async function fetchNotionStatus(date) {
-  // 取得中は合計値を「読み込み中...」に変える
-  document.querySelectorAll(".total-points").forEach(span => {
-    span.textContent = "合計: 読み込み中...";
-  });
-  // 一旦、全入力欄の色をリセット
-  document.querySelectorAll(".app-point-input").forEach(input => {
-    input.classList.remove("filled", "unfilled");
-  });
+  // 通信中であることを画面に表示
+  document.querySelectorAll(".total-points").forEach(span => span.textContent = "合計: 読み込み中...");
+  document.querySelectorAll(".app-point-input").forEach(input => input.classList.remove("filled", "unfilled"));
 
   try {
+    // GAS（Notionの仲介役）にアクセスしてデータを貰う
     const response = await fetch(`${CONFIG.gasUrl}?date=${encodeURIComponent(date)}`);
-    const result = await response.json();
+    const result = await response.json(); // 貰ったデータをJSON（扱いやすいデータ形式）に変換
     
-    if (result.status !== "success") {
-      throw new Error(result.message || "不明なエラー");
-    }
+    if (result.status !== "success") throw new Error(result.message || "不明なエラー");
     
-    // 取得したデータを状態(state)に保存
+    // 取ってきたデータを「state（状態）」に保存する
     state.notionStatus = result;
-    // データの状態に基づいて画面を更新
+    // 取ってきたデータを画面の入力欄に当てはめる
     applyNotionStatusToUI(result);
     
+    // データが揃ったので画面を更新（これでグラフも描けるようになります）
+    render();
+    
   } catch (error) {
-    // エラーが発生したら、メッセージをstateに書き込んでrenderに知らせる
-    state.message = { text: "ステータス取得エラー: " + error.message, type: "error" };
-    document.querySelectorAll(".total-points").forEach(span => {
-      span.textContent = "合計: 取得失敗";
-    });
+    state.message = { text: "通信エラー: " + error.message, type: "error" };
+    document.querySelectorAll(".total-points").forEach(span => span.textContent = "合計: 取得失敗");
     render();
   }
 }
 
-// --- Notionの状態を画面(UI)に反映する ---
+// --- 取ってきたNotionのデータを画面の入力欄に反映させる処理 ---
 function applyNotionStatusToUI(notionData) {
   const { existingValues, pastTotal } = notionData;
 
-  // 全てのアプリ入力欄に対して処理を行う
+  // すべての入力欄を一つずつチェックする
   document.querySelectorAll(".app-point-input").forEach(input => {
     const appName = input.getAttribute("data-app-name");
     
-    // ① 入力欄の色を決める (データの意味: existingValuesに値があって0より大きいか？)
+    // その日のデータがNotion上に0より大きく存在するか？
     const hasValue = existingValues && existingValues.hasOwnProperty(appName) && existingValues[appName] > 0;
+    
+    // データがあれば青（filled）、なければ赤（unfilled）のクラスを付ける
     if (hasValue) {
-      input.classList.add("filled");   // 青：値あり
+      input.classList.add("filled");
       input.classList.remove("unfilled");
     } else {
-      input.classList.add("unfilled"); // 赤：値なし
+      input.classList.add("unfilled");
       input.classList.remove("filled");
     }
 
-    // ② 入力欄に値を入れる (データの意味: 過去合計 + 今日の値)
+    // 過去の合計ポイントを取得
     const baseTotal = pastTotal[appName] || 0;
-    if (existingValues && existingValues.hasOwnProperty(appName) && existingValues[appName] > 0) {
-      const existingToday = existingValues[appName];
-      input.value = baseTotal + existingToday;
+    
+    // データがあれば「過去の合計＋今日の入力値」を入力欄に表示
+    if (hasValue) {
+      input.value = baseTotal + existingValues[appName];
     } else {
-      input.value = ""; // 未入力なら空欄
+      input.value = ""; // なければ空欄のまま
     }
 
-    // ③ 合計ラベルを更新する (これは「今日の分を含まない過去の合計」という意味)
+    // 合計ポイントのテキストを更新する
     const totalSpan = document.querySelector(`.total-points[data-app-name="${appName}"]`);
-    if (totalSpan) {
-      totalSpan.textContent = `合計： ${baseTotal.toLocaleString()}`;
-    }
+    if (totalSpan) totalSpan.textContent = `合計： ${baseTotal.toLocaleString()}`;
   });
 }
 
-// --- フォーム送信処理 ---
+// --- 送信ボタンが押された時の処理 ---
 async function handleFormSubmit(e) {
-  e.preventDefault(); // ブラウザのデフォルト送信動作を止める
-
-  // 1. 送信中フラグを立てて、ボタンを無効化する
-  state.isSubmitting = true;
+  e.preventDefault(); // 画面がリロードされるのを防ぐ
+  state.isSubmitting = true; // 送信中という状態にする
   state.message = { text: "計算してNotionへ送信しています...", type: "info" };
   render();
 
-  // 2. 送信するデータを作成
-  const payload = {
-    date: dateInputEl.value,
-    points: {}
-  };
-
+  // Notionに送るためのデータの箱を作る
+  const payload = { date: dateInputEl.value, points: {} };
+  
+  // 画面に入力されている数値を拾い集める
   const pointInputs = document.querySelectorAll(".app-point-input");
   pointInputs.forEach(input => {
     const appName = input.getAttribute("data-app-name");
     const rawValue = input.value.trim();
-    if (rawValue !== "") {
-      payload.points[appName] = Number(rawValue); // 文字列を数値に変換
-    }
+    // 空欄じゃなければ箱に入れる（数字に変換して入れる）
+    if (rawValue !== "") payload.points[appName] = Number(rawValue);
   });
 
-  // 3. APIへ送信
   try {
+    // GAS経由でNotionにデータを送信する
     const response = await fetch(CONFIG.gasUrl, {
       method: "POST",
       headers: { "Content-Type": "text/plain" },
@@ -268,44 +265,146 @@ async function handleFormSubmit(e) {
     });
 
     const result = await response.json();
-
     if (result.status === "success") {
-      // 成功: 状態を更新し、入力欄をクリアしてもう一度最新データを取得
-      state.isSubmitting = false;
+      state.isSubmitting = false; // 送信完了
       state.message = { text: "Notionへの記録が完了しました！", type: "success" };
       render();
       
+      // 送信が終わったら入力欄を一旦空にして、最新データを再取得する
       pointInputs.forEach(input => input.value = "");
       fetchNotionStatus(dateInputEl.value);
     } else {
       throw new Error(result.message);
     }
   } catch (error) {
-    // 失敗: エラーメッセージを表示
     state.isSubmitting = false;
     state.message = { text: "エラーが発生しました: " + error.message, type: "error" };
     render();
   }
 }
 
-// --- 画面の再描画 (Render) ---
-// 現在の状態(state)を元に、画面の部品を書き換える唯一の関数
-function render() {
-  // 1. 送信ボタンの有効/無効とラベルをstateに合わせて変更
-  if (state.isSubmitting) {
-    submitBtnEl.textContent = "送信中...";
-    submitBtnEl.disabled = true;
-  } else {
-    submitBtnEl.textContent = "Notionへ送信";
-    submitBtnEl.disabled = false;
+// --- ★記録タブのグラフを描画する処理 ---
+function renderChart() {
+  // Notionのデータがまだ取得できていない場合はメッセージを表示して終了する
+  if (!state.notionStatus) {
+    chartContainer.innerHTML = "<p style='color:#888; text-align:center;'>データを取得中です...</p>";
+    totalYenEl.textContent = "0";
+    return;
   }
 
-  // 2. ステータスメッセージの表示/非表示と内容をstateに合わせて変更
-  messageEl.textContent = state.message.text;
-  messageEl.className = `status-msg ${state.message.type}`;
+  const { existingValues, pastTotal } = state.notionStatus;
+  let chartData = []; // グラフ用のデータを貯める配列（リスト）
+  let totalYen = 0;   // 今日の合計金額
+
+  // 1. 各アプリごとに今日の「円」を計算する
+  CONFIG.apps.forEach(appName => {
+    // 画面の入力欄に入力されている現在の値を取得する
+    const inputEl = document.querySelector(`.app-point-input[data-app-name="${appName}"]`);
+    let todayPoint = 0;
+    const baseTotal = pastTotal && pastTotal[appName] ? pastTotal[appName] : 0;
+
+    // 「画面に入力されている値 - 過去の合計」が今日のポイント
+    if (inputEl && inputEl.value !== "") {
+      todayPoint = Number(inputEl.value) - baseTotal;
+      if (todayPoint < 0) todayPoint = 0; // マイナスの場合は0扱い
+    } 
+    // まだ画面に入力していない場合は、Notionから取得した今日のポイントを使う
+    else if (existingValues && existingValues[appName]) {
+      todayPoint = existingValues[appName];
+    }
+
+    // ポイントを「割る数（レート）」で割って円換算する
+    const rate = CONFIG.rates[appName] || 1; 
+    const yen = todayPoint / rate;
+    totalYen += yen;
+
+    // ★修正部分：アプリ名から先頭の数字と末尾の（入力用）を消して綺麗にする
+    // 例: "1.トリマ（入力用）" -> "トリマ"
+    // /^\d+\./ は「先頭（^）にある数字（\d+）とドット（\.）」を指す正規表現
+    // /（入力用）$/ は「末尾（$）にある（入力用）」を指す正規表現
+    const cleanName = appName.replace(/^\d+\./, '').replace(/（入力用）$/, '').trim();
+
+    // 綺麗にした名前と金額を配列に追加する
+    chartData.push({
+      name: cleanName,
+      yen: yen
+    });
+  });
+
+  // 2. 円換算の金額が高い順（降順）に並べ替える
+  // b.yen - a.yen とすることで、大きい数字のデータが配列の前の方に来ます
+  chartData.sort((a, b) => b.yen - a.yen);
+
+  // 3. グラフの横軸の長さを決める
+  // 稼ぎが一番多いアプリ（並べ替えたので0番目にある）の金額を基準にします
+  const maxYen = chartData.length > 0 ? chartData[0].yen : 0;
+  // 最大値に10%（1.1倍）の余裕を持たせる。もし誰も稼いでなければメモリの基準を10にする。
+  const chartMax = maxYen > 0 ? maxYen * 1.1 : 10;
+
+  // 4. 画面上の「本日の合計」に数字を入れる（toFixed(1)で小数点第1位まで表示）
+  totalYenEl.textContent = totalYen.toFixed(1);
+
+  // 5. HTMLを組み立ててグラフの箱に流し込む
+  clearElement(chartContainer);
+  chartData.forEach(data => {
+    // このアプリの金額が、最大値に対して何パーセント（割合）の長さになるか計算
+    const widthPercent = (data.yen / chartMax) * 100;
+    
+    // 1行分のHTMLの箱（divタグ）を作る
+    const row = document.createElement("div");
+    row.className = "chart-row";
+    
+    // 箱の中に名前、伸びる棒、金額を入れる
+    // `（バッククォート）で囲むと、文字の中に ${変数} の形でデータを埋め込めます
+    row.innerHTML = `
+      <div class="chart-label">${data.name}</div>
+      <div class="chart-bar-area">
+        <div class="chart-bar" style="width: ${widthPercent}%"></div>
+      </div>
+      <div class="chart-value">${data.yen.toFixed(1)}</div>
+    `;
+    
+    // 作った1行をグラフ全体の箱に追加する
+    chartContainer.appendChild(row);
+  });
 }
 
-// ===============================================
-// 4. アプリケーション起動
-// ===============================================
+// --- 画面の再描画 (Render) ---
+// 「state（状態）」を見て、それに合わせて画面の見た目を切り替える仕事だけをします。
+function render() {
+  // 送信ボタンの状態を更新
+  if (state.isSubmitting) {
+    submitBtnEl.textContent = "送信中...";
+    submitBtnEl.disabled = true; // 押せないようにする
+  } else {
+    submitBtnEl.textContent = "Notionへ送信";
+    submitBtnEl.disabled = false; // 押せるようにする
+  }
+
+  // メッセージの文字と色（クラス）を更新
+  messageEl.textContent = state.message.text;
+  messageEl.className = `status-msg ${state.message.type}`;
+
+  // 今どちらのタブが開かれているか（activeTab）を見て、画面を切り替える
+  if (state.activeTab === 'input') {
+    // 入力タブを「選ばれている状態(active)」にする
+    tabInputBtn.classList.add("active");
+    tabRecordBtn.classList.remove("active");
+    // 入力画面を表示して、記録画面を隠す
+    viewInput.classList.add("active");
+    viewRecord.classList.remove("active");
+  } else {
+    // 記録タブを「選ばれている状態(active)」にする
+    tabInputBtn.classList.remove("active");
+    tabRecordBtn.classList.add("active");
+    // 記録画面を表示して、入力画面を隠す
+    viewInput.classList.remove("active");
+    viewRecord.classList.add("active");
+    
+    // 記録タブ（グラフ画面）が表示されている時だけ、グラフの計算と描画を行う
+    renderChart();
+  }
+}
+
+// --- 全ての準備が整ったので、アプリを起動する ---
 init();
